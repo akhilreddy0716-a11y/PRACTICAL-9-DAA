@@ -1,0 +1,70 @@
+#include <iostream>
+#include <vector>
+#include <climits>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+
+    vector<vector<int>> graph(n, vector<int>(n));
+
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            cin >> graph[i][j];
+
+    vector<int> key(n, INT_MAX);
+    vector<int> parent(n, -1);
+    vector<bool> visited(n, false);
+
+    key[0] = 0;
+
+    for (int count = 0; count < n - 1; count++) {
+        int u = -1;
+
+        for (int i = 0; i < n; i++)
+            if (!visited[i] && (u == -1 || key[i] < key[u]))
+                u = i;
+
+        visited[u] = true;
+
+        for (int v = 0; v < n; v++) {
+            if (graph[u][v] != 0 && !visited[v] && graph[u][v] < key[v]) {
+                key[v] = graph[u][v];
+                parent[v] = u;
+            }
+        }
+    }
+
+    int total = 0;
+
+    cout << "Minimum Spanning Tree:\n";
+
+    for (int i = 1; i < n; i++) {
+        cout << char(parent[i] + 'A') << " - "
+             << char(i + 'A') << " : "
+             << graph[i][parent[i]] << endl;
+        total += graph[i][parent[i]];
+    }
+
+    cout << "Total Weight: " << total << endl;
+
+    return 0;
+}
+
+
+INPUT:
+5
+0 2 0 6 0
+2 0 3 8 5
+0 3 0 0 7
+6 8 0 0 9
+0 5 7 9 0
+
+OUTPUT:
+Minimum Spanning Tree:
+A - B : 2
+B - C : 3
+A - D : 6
+B - E : 5
+Total Weight: 16
